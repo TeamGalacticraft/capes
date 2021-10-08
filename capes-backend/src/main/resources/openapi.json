@@ -1,0 +1,402 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Galacticraft Capes API",
+        "termsOfService": "https://capes.galacticraft.team/terms",
+        "description": "The official capes API for Galacticraft",
+        "version": "0.2.0",
+        "license": {
+            "name": "MIT",
+            "url": "https://choosealicense.com/licenses/mit/"
+        },
+        "contact": {
+            "name": "Team Galacticraft",
+            "url": "https://discord.gg/galacticraft"
+        }
+    },
+    "servers": [
+        {
+            "description": "Official Instance",
+            "url": "https://capes.galacticraft.team/api/v1/"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Public API",
+            "description": "The public section of the api, no authentication is required for these requests."
+        },
+        {
+            "name": "Authenticated Users",
+            "description": "An authenticated user or admin API key is required for these requests. Note: User API keys can only modify the player the key belongs to."
+        },
+        {
+            "name": "Admin Only",
+            "description": "An authenticated admin API key is required for these requests."
+        }
+    ],
+    "paths": {
+        "/capes": {
+            "get":{
+                "operationId": "getCapes",
+                "security": [],
+                "tags": ["Public API"],
+                "responses": {
+                    "200": {
+                        "description": "List of capes.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/cape"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "addCape",
+                "security": [
+                    {
+                        "BearerToken": [
+                            "admin"
+                        ]
+                    }
+                ],
+                "tags": ["Admin Only"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/cape"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid request body."
+                    },
+                    "401": {
+                        "description": "Unauthorized."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    }
+                }
+            }
+        },
+        "/capes/{id}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "description": "The cape's id.",
+                    "schema": {
+                        "$ref": "#/components/schemas/uuid"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getCape",
+                "security": [],
+                "tags": ["Public API"],
+                "description": "Get a specific cape.",
+                "responses": {
+                    "200": {
+                        "description": "A single cape.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/cape"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No cape exists with the provided id."
+                    }
+                }
+            },
+            "put": {
+                "operationId": "updateCape",
+                "security": [
+                    {
+                        "BearerToken": [
+                            "admin"
+                        ]
+                    }
+                ],
+                "tags": ["Admin Only"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid request body."
+                    },
+                    "401": {
+                        "description": "Unauthorized."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Not Found."
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "deleteCape",
+                "security": [
+                    {
+                        "BearerToken": [
+                            "admin"
+                        ]
+                    }
+                ],
+                "tags": ["Admin Only"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid request body."
+                    },
+                    "401": {
+                        "description": "Unauthorized."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Not Found."
+                    }
+                }
+            }
+        },
+        "/players": {
+            "get": {
+                "operationId": "getPlayers",
+                "security": [],
+                "tags": ["Public API"],
+                "responses": {
+                    "200": {
+                        "description": "List of players.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "$ref": "#/components/schemas/player"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/players/{uuid}": {
+            "parameters": [
+                {
+                    "name": "uuid",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/uuid"
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "getPlayer",
+                "security": [],
+                "tags": ["Public API"],
+                "responses": {
+                    "200": {
+                        "description": "A single player.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/player"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No player exists with the provided id."
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "deleteUser",
+                "security": [
+                    {
+                        "BearerToken": [
+                            "self",
+                            "admin"
+                        ]
+                    }
+                ],
+                "tags": ["Authenticated Users"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "User not found."
+                    }
+                }
+            }
+        },
+        "/players/{uuid}/cape": {
+            "parameters": [
+                {
+                    "name": "uuid",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/uuid"
+                    }
+                }
+            ],
+            "put": {
+                "operationId": "setPlayerCape",
+                "security": [
+                    {
+                        "BearerToken": [
+                            "self",
+                            "admin"
+                        ]
+                    }
+                ],
+                "tags": ["Authenticated Users"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/uuid"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid request body."
+                    },
+                    "401": {
+                        "description": "Unauthorized."
+                    },
+                    "403": {
+                        "description": "Forbidden."
+                    },
+                    "404": {
+                        "description": "Not Found."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "uuid":{
+                "type": "string",
+                "format": "uuid",
+                "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+            },
+            "cape": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "type"
+                ],
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "type":{
+                        "$ref": "#/components/schemas/type"
+                    },
+                    "texture": {
+                        "type": "string"
+                    }
+                }
+            },
+            "type":{
+                "type": "string",
+                "enum": [
+                    "modern",
+                    "legacy",
+                    "developer"
+                ]
+            },
+            "player": {
+                "required": [
+                    "uuid",
+                    "name",
+                    "cape",
+                    "types"
+                ],
+                "properties": {
+                    "uuid": {
+                        "$ref": "#/components/schemas/uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "cape": {
+                        "$ref": "#/components/schemas/uuid"
+                    },
+                    "types": {
+                        "description": "The types of cape the player has access to.",
+                        "type": "array",
+                        "uniqueItems": true,
+                        "minItems": 0,
+                        "items": {
+                            "$ref": "#/components/schemas/type"
+                        }
+                    },
+                    "discord": {
+                        "type": "number",
+                        "description": "The player's linked Discord id."
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "BearerToken": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        }
+    },
+    "security": [
+        {
+            "BearerToken": [
+                "self",
+                "admin"
+            ]
+        }
+    ]
+}
