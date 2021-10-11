@@ -16,7 +16,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
 
-    val javalinVersion = "4.1.0"
+    val javalinVersion = "4.1.1"
     implementation("io.javalin:javalin:$javalinVersion")
 
     val exposedVersion = "0.35.1"
