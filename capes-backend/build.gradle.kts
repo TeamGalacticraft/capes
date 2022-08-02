@@ -19,7 +19,7 @@ dependencies {
     val javalinVersion = "4.6.4"
     implementation("io.javalin:javalin:$javalinVersion")
 
-    val exposedVersion = "0.35.3"
+    val exposedVersion = "0.39.1"
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
